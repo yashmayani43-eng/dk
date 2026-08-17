@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>System Compromised</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #050505;
+      color: #ff2020;
+      font-family: "Courier New", monospace;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 30px;
+    }
+
+    /* Scanlines */
+    .screen::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.025) 0px,
+        rgba(255, 255, 255, 0.025) 1px,
+        transparent 1px,
+        transparent 4px
+      );
+      z-index: 10;
+    }
+
+    /* Red glow */
+    .screen::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(
+        circle,
+        transparent 30%,
+        rgba(255, 0, 0, 0.08) 100%
+      );
+    }
+
+    .container {
+      width: min(900px, 100%);
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .warning {
+      font-size: 14px;
+      letter-spacing: 5px;
+      margin-bottom: 25px;
+      color: #ff5555;
+      animation: blink 1s infinite;
+    }
+
+    .title {
+      font-size: clamp(55px, 10vw, 125px);
+      font-weight: 900;
+      line-height: 0.9;
+      letter-spacing: -5px;
+      text-transform: uppercase;
+      text-shadow:
+        4px 0 #7a0000,
+        -4px 0 #ff0000,
+        0 0 30px rgba(255, 0, 0, 0.7);
+      animation: glitch 1.5s infinite;
+    }
+
+    .subtitle {
+      margin-top: 30px;
+      color: #ddd;
+      font-size: 17px;
+      line-height: 1.7;
+    }
+
+    .terminal {
+      margin: 35px auto;
+      max-width: 700px;
+      text-align: left;
+      background: #090909;
+      border: 1px solid #450000;
+      box-shadow: 0 0 40px rgba(255, 0, 0, 0.12);
+      padding: 22px;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #aaa;
+    }
+
+    .terminal span {
+      color: #ff3030;
+    }
+
+    .terminal .green {
+      color: #777;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 15px;
+      background: #ff2020;
+      animation: cursor 0.7s infinite;
+      vertical-align: middle;
+    }
+
+    .countdown {
+      margin-top: 25px;
+      font-size: 42px;
+      font-weight: bold;
+      color: #ff0000;
+      text-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
+    }
+
+    .footer {
+      margin-top: 30px;
+      color: #555;
+      font-size: 11px;
+      letter-spacing: 2px;
+    }
+
+    @keyframes blink {
+      0%, 45% {
+        opacity: 1;
+      }
+      50%, 100% {
+        opacity: 0.25;
+      }
+    }
+
+    @keyframes cursor {
+      0%, 50% {
+        opacity: 1;
+      }
+      51%, 100% {
+        opacity: 0;
+      }
+    }
+
+    @keyframes glitch {
+      0%, 90%, 100% {
+        transform: translate(0);
+      }
+
+      92% {
+        transform: translate(-5px, 2px);
+      }
+
+      94% {
+        transform: translate(5px, -2px);
+      }
+
+      96% {
+        transform: translate(-3px, 0);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .screen {
+        padding: 20px;
+      }
+
+      .title {
+        letter-spacing: -2px;
+      }
+
+      .terminal {
+        font-size: 11px;
+        padding: 15px;
+      }
+
+      .subtitle {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="screen">
+
+    <div class="container">
+
+      <div class="warning">
+        ⚠ SYSTEM SECURITY ALERT ⚠
+      </div>
+
+      <div class="title">
+        YOU GOT<br>
+        HACKED
+      </div>
+
+      <div class="subtitle">
+        Unauthorized access detected.<br>
+        Your system has been compromised.
+      </div>
+
+      <div class="terminal">
+        <div><span>[!]</span> Initializing security breach...</div>
+        <div><span>[!]</span> Bypassing authentication...</div>
+        <div><span>[!]</span> Access granted.</div>
+        <div><span>[!]</span> Scanning system files...</div>
+        <div><span>[!]</span> Encrypting connection...</div>
+        <div class="green">[+] Connection established.</div>
+        <div class="green">[+] Security protocols disabled.</div>
+        <div>
+          <span>root@system:~$</span>
+          <span class="cursor"></span>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:12px; color:#777;">
+          SYSTEM LOCKDOWN IN
+        </div>
+
+        <div class="countdown" id="countdown">
+          00:30
+        </div>
+      </div>
+
+      <div class="footer">
+        SECURITY INCIDENT // DEMO MODE
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    let seconds = 30;
+
+    const countdown = document.getElementById("countdown");
+
+    const timer = setInterval(() => {
+      seconds--;
+
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+
+      countdown.textContent =
+        String(minutes).padStart(2, "0") +
+        ":" +
+        String(remainingSeconds).padStart(2, "0");
+
+      if (seconds <= 0) {
+        clearInterval(timer);
+
+        countdown.textContent = "00:00";
+      }
+    }, 1000);
+  </script>
+
+</body>
+</html>
